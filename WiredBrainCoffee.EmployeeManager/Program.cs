@@ -13,7 +13,23 @@ builder.Services.AddDbContext<EmployeeManagerDbContext>(
         builder.Configuration.GetConnectionString("EmployeeManagerDb")));
 
 var app = builder.Build();
+#region Migrazione a runtime
+//Non usare in produzione, utile solo in sviluppo.
 
+await EnsureDatabaseIsCreated(app.Services);
+
+async Task EnsureDatabaseIsCreated(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    using var context = scope.ServiceProvider.GetService<EmployeeManagerDbContext>();
+    if (context != null)
+    {
+        await context.Database.MigrateAsync();
+
+    }
+
+}
+#endregion Migrazione a runtime
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
