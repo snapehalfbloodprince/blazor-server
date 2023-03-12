@@ -1,4 +1,8 @@
 ﻿@page "/employees/list"
+@using Microsoft.EntityFrameworkCore;
+@using WiredBrainCoffee.EmployeeManager.Data.Models;
+@using WiredBrainCoffee.EmployeeManager.Data;
+@inject EmployeeManagerDbContext Context;
 
 <PageTitle>Employees</PageTitle>
 
@@ -6,3 +10,15 @@
 
 TODO: creare una lista di impiegati
 
+@code{
+
+    private Employee[]? Employees { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Employees = await Context.Employees
+        .Include(emp => emp.Department)
+        .ToArrayAsync();
+    }
+
+}
