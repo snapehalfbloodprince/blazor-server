@@ -8,9 +8,37 @@
 
 <h1>Employees</h1>
 
-TODO: creare una lista di impiegati
+@if (Employees == null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Is Developer</th>
+                <th>Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Employees)
+            {
+                <tr>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.IsDeveloper</td>
+                    <td>@employee.Department?.Name</td>
 
-@code{
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
 
     private Employee[]? Employees { get; set; }
 
