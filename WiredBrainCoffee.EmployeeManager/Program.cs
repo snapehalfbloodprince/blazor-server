@@ -15,8 +15,10 @@ builder.Services.AddDbContext<EmployeeManagerDbContext>(
 var app = builder.Build();
 #region Migrazione a runtime
 //Non usare in produzione, utile solo in sviluppo.
-
-await EnsureDatabaseIsCreated(app.Services);
+if (!OperatingSystem.IsMacOS())
+{
+    await EnsureDatabaseIsCreated(app.Services);
+}
 
 async Task EnsureDatabaseIsCreated(IServiceProvider services)
 {
