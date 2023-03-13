@@ -1,4 +1,4 @@
-﻿@page "/employees/list"
+﻿@page "/employees/list/{currentPage:int?}"
 @inject IDbContextFactory<EmployeeManagerDbContext> ContextFactory;
 
 <PageTitle>Employees</PageTitle>
@@ -36,17 +36,27 @@ else
 }
 
 @code {
+    [Parameter]
+    public int? CurrentPage { get; set; }
 
     private Employee[]? Employees { get; set; }
 
     private const int ItemsPerPage = 4;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        if (CurrentPage == null)
+        {
+            CurrentPage = 1;
+        }
         using var context = ContextFactory.CreateDbContext();
+
+        var itemsToSkip = (CurrentPage.Value - 1) * ItemsPerPage;
+
         Employees = await context.Employees
         .Include(emp => emp.Department)
         .OrderBy(emp => emp.FirstName)
+        .Skip(itemsToSkip)
         .Take(ItemsPerPage)
         .ToArrayAsync();
     }
