@@ -12,7 +12,7 @@
                 <label for="firstname" class="form-label">Firstname</label>
                 <InputText id="firstname" class="form-control"
                            @bind-Value="Employee.FirstName" />
-                <ValidationMessage For="()=>Employee.FirstName"/>
+                <ValidationMessage For="()=>Employee.FirstName" />
             </div>
 
             <div class="mb-3">
@@ -20,6 +20,12 @@
                 <InputText id="lastname" class="form-control"
                            @bind-Value="Employee.LastName" />
                 <ValidationMessage For="()=>Employee.LastName" />
+            </div>
+
+            <div class="mb-3">
+                <label for="isDeveloper" class="form-label">Is developer:</label>
+                <InputCheckbox id="isDeveloper" class="form-check-input"
+                           @bind-Value="Employee.IsDeveloper" />
             </div>
 
             <button type="submit" class="btn btn-primary">Add</button>
