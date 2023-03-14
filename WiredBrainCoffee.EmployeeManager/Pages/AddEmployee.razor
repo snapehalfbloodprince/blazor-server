@@ -5,7 +5,8 @@
 
 @if (Employee is not null)
 {
-    <EditForm Model="@Employee" OnValidSubmit="@HandleValidSubmit">
+    <EditForm Model="@Employee" OnValidSubmit="@HandleValidSubmit"
+              OnInvalidSubmit="@HandleInvalidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -119,6 +120,11 @@
         }
 
 
+    }
+    private void HandleInvalidSubmit()
+    {
+        SuccessMessage = null;
+        ErrorMessage = null;
     }
 }
 
