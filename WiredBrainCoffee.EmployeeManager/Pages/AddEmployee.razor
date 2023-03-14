@@ -12,12 +12,14 @@
                 <label for="firstname" class="form-label">Firstname</label>
                 <InputText id="firstname" class="form-control"
                            @bind-Value="Employee.FirstName" />
+                <ValidationMessage For="()=>Employee.FirstName"/>
             </div>
 
             <div class="mb-3">
                 <label for="lastname" class="form-label">Lastname</label>
                 <InputText id="lastname" class="form-control"
                            @bind-Value="Employee.LastName" />
+                <ValidationMessage For="()=>Employee.LastName" />
             </div>
 
             <button type="submit" class="btn btn-primary">Add</button>
