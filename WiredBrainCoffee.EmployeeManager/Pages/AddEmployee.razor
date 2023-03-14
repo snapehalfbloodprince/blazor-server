@@ -1,44 +1,68 @@
 ﻿@page "/employees/add"
+@inject IDbContextFactory<EmployeeManagerDbContext> ContextFactory;
 <PageTitle>Add Employee</PageTitle>
 <h1>Add Employee</h1>
 
 @if (Employee is not null)
-    {
-        <EditForm Model="@Employee">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+{
+    <EditForm Model="@Employee">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-            <div class="mb-3">
-                <label for="firstname" class="form-label">Firstname</label>
-                <InputText id="firstname" class="form-control"
-                           @bind-Value="Employee.FirstName" />
-                <ValidationMessage For="()=>Employee.FirstName" />
-            </div>
+        <div class="mb-3">
+            <label for="firstname" class="form-label">Firstname</label>
+            <InputText id="firstname" class="form-control"
+                       @bind-Value="Employee.FirstName" />
+            <ValidationMessage For="()=>Employee.FirstName" />
+        </div>
 
-            <div class="mb-3">
-                <label for="lastname" class="form-label">Lastname</label>
-                <InputText id="lastname" class="form-control"
-                           @bind-Value="Employee.LastName" />
-                <ValidationMessage For="()=>Employee.LastName" />
-            </div>
+        <div class="mb-3">
+            <label for="lastname" class="form-label">Lastname</label>
+            <InputText id="lastname" class="form-control"
+                       @bind-Value="Employee.LastName" />
+            <ValidationMessage For="()=>Employee.LastName" />
+        </div>
 
-            <div class="mb-3">
-                <label for="isDeveloper" class="form-label">Is developer:</label>
-                <InputCheckbox id="isDeveloper" class="form-check-input"
+        <div class="mb-3">
+            <label for="department" class="form-label">Department</label>
+            <InputSelect id="department" class="form-select"
+                         @bind-Value="Employee.DepartmentId">
+                @if (Departments is not null)
+                {
+                    @foreach (var department in Departments)
+                    {
+                        <option value="@department.Id">@department.Name</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label for="isDeveloper" class="form-label">Is developer:</label>
+            <InputCheckbox id="isDeveloper" class="form-check-input"
                            @bind-Value="Employee.IsDeveloper" />
-            </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary">Add</button>
-        </EditForm>
-    }
+        <button type="submit" class="btn btn-primary">Add</button>
+    </EditForm>
+}
 
 @code {
 
-    public Employee? Employee { get; set; }
+    private Employee? Employee { get; set; }
 
-    protected override void OnInitialized()
+    private Department[]? Departments { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        Employee = new();
+        using var context = ContextFactory.CreateDbContext();
+        Departments = await context.Departments
+            .OrderBy(dep => dep.Name)
+            .ToArrayAsync();
+        Employee = new()
+        {
+            DepartmentId = Departments.FirstOrDefault()?.Id
+        };
     }
 }
 
