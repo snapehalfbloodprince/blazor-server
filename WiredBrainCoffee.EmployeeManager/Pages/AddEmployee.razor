@@ -3,63 +3,24 @@
 <PageTitle>Add Employee</PageTitle>
 <h1>Add Employee</h1>
 
-@if (Employee is not null)
+<EmployeeForm Employee="@Employee"
+    Departments="@Departments"
+    IsBusy="@IsBusy"
+    OnSubmit="@HandleSubmit"/>
+
+@if (SuccessMessage is not null)
 {
-    <EditForm Model="@Employee" OnValidSubmit="@HandleValidSubmit"
-              OnInvalidSubmit="@HandleInvalidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="mb-3">
-            <label for="firstname" class="form-label">Firstname</label>
-            <InputText id="firstname" class="form-control"
-                       @bind-Value="Employee.FirstName" />
-            <ValidationMessage For="()=>Employee.FirstName" />
-        </div>
-
-        <div class="mb-3">
-            <label for="lastname" class="form-label">Lastname</label>
-            <InputText id="lastname" class="form-control"
-                       @bind-Value="Employee.LastName" />
-            <ValidationMessage For="()=>Employee.LastName" />
-        </div>
-
-        <div class="mb-3">
-            <label for="department" class="form-label">Department</label>
-            <InputSelect id="department" class="form-select"
-                         @bind-Value="Employee.DepartmentId">
-                @if (Departments is not null)
-                {
-                    @foreach (var department in Departments)
-                    {
-                        <option value="@department.Id">@department.Name</option>
-                    }
-                }
-            </InputSelect>
-        </div>
-
-        <div class="mb-3">
-            <label for="isDeveloper" class="form-label">Is developer:</label>
-            <InputCheckbox id="isDeveloper" class="form-check-input"
-                           @bind-Value="Employee.IsDeveloper" />
-        </div>
-
-        <button type="submit" class="btn btn-primary" disabled="@IsBusy">Add</button>
-    </EditForm>
-    @if (SuccessMessage is not null)
-    {
-        <br />
-        <div class="alert alert-success">
-            @SuccessMessage
-        </div>
-    }
-    @if (ErrorMessage is not null)
-    {
-        <br />
-        <div class="alert alert-danger">
-            @ErrorMessage
-        </div>
-    }
+    <br />
+    <div class="alert alert-success">
+        @SuccessMessage
+    </div>
+}
+@if (ErrorMessage is not null)
+{
+    <br />
+    <div class="alert alert-danger">
+        @ErrorMessage
+    </div>
 }
 
 @code {
@@ -68,11 +29,12 @@
 
     private Department[]? Departments { get; set; }
 
+    private bool IsBusy { get; set; }
+
     private string? SuccessMessage { get; set; }
 
     private string? ErrorMessage { get; set; }
 
-    private bool IsBusy { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,11 +43,20 @@
             .OrderBy(dep => dep.Name)
             .ToArrayAsync();
         Employee = new()
-        {
-            DepartmentId = Departments.FirstOrDefault()?.Id
-        };
+            {
+                DepartmentId = Departments.FirstOrDefault()?.Id
+            };
     }
-
+    private async Task HandleSubmit(bool isValid)
+    {
+        if (isValid)
+        {
+            await HandleValidSubmit();
+        }else
+        {
+            HandleInvalidSubmit();
+        }
+    }
     private async Task HandleValidSubmit()
     {
         if (IsBusy)
@@ -104,9 +75,9 @@
                 ErrorMessage = null;
                 //nuovo dipendente per la prossima aggiunta
                 Employee = new()
-                {
-                    DepartmentId = Employee.DepartmentId
-                };
+                    {
+                        DepartmentId = Employee.DepartmentId
+                    };
             }
         }
         catch (Exception ex)
