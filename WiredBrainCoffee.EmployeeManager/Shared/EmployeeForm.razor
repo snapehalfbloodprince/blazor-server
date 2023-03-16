@@ -38,8 +38,15 @@
             <InputCheckbox id="isDeveloper" class="form-check-input"
                        @bind-Value="Employee.IsDeveloper" />
         </div>
-
-        <button type="submit" class="btn btn-primary" disabled="@IsBusy">Add</button>
+        @if (IsEdit)
+        {
+            <button type="submit" class="btn btn-primary" disabled="@IsBusy">Update</button>
+            <button type="button" class="btn btn-secondary" disabled="@IsBusy">Cancel</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-primary" disabled="@IsBusy">Add</button>
+        }
     </EditForm>
 
 }
@@ -51,6 +58,8 @@
     public Department[]? Departments { get; set; }
     [Parameter]
     public bool IsBusy { get; set; }
+    [Parameter]
+    public bool IsEdit { get; set; }
     [Parameter]
     public EventCallback<bool> OnSubmit { get; set; }
 
