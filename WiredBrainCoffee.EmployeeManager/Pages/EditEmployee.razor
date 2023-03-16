@@ -12,6 +12,7 @@
 else
 {
     <EmployeeForm Employee="@Employee"
+              Departments="@Departments"
               IsBusy="@IsBusy" />
 }
 
@@ -20,6 +21,9 @@ else
     public int EmployeeId { get; set; }
 
     private Employee? Employee { get; set; }
+
+    private Department[]? Departments { get; set; }
+
 
     private bool IsBusy { get; set; }
 
@@ -30,6 +34,9 @@ else
         try
         {
             using var context = ContextFactory.CreateDbContext();
+            Departments = await context.Departments
+                .OrderBy(dep => dep.Name)
+                .ToArrayAsync();
             Employee = await context.Employees
                 .FirstOrDefaultAsync(emp => emp.Id == EmployeeId);
         }
