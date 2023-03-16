@@ -4,7 +4,16 @@
 <PageTitle>Edit Employee</PageTitle>
 <h1>Edit Employee</h1>
 
-<EmployeeForm Employee="@Employee"/>
+
+@if (Employee is null && !IsBusy)
+{
+    <div class="alert alert-danger">Employee with @EmployeeId was not found.</div>
+}
+else
+{
+    <EmployeeForm Employee="@Employee"
+              IsBusy="@IsBusy" />
+}
 
 @code {
     [Parameter]
@@ -12,11 +21,23 @@
 
     private Employee? Employee { get; set; }
 
+    private bool IsBusy { get; set; }
+
+
     protected override async Task OnParametersSetAsync()
     {
-        using var context = ContextFactory.CreateDbContext();
-        Employee = await context.Employees
-            .FirstOrDefaultAsync(emp => emp.Id == EmployeeId);
+        IsBusy = true;
+        try
+        {
+            using var context = ContextFactory.CreateDbContext();
+            Employee = await context.Employees
+                .FirstOrDefaultAsync(emp => emp.Id == EmployeeId);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
 
     }
 }
