@@ -1,9 +1,23 @@
 ﻿@page "/employees/edit/{employeeId:int}"
+@inject IDbContextFactory<EmployeeManagerDbContext> ContextFactory;
+
 <PageTitle>Edit Employee</PageTitle>
 <h1>Edit Employee</h1>
+
+<EmployeeForm Employee="@Employee"/>
 
 @code {
     [Parameter]
     public int EmployeeId { get; set; }
+
+    private Employee? Employee { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        using var context = ContextFactory.CreateDbContext();
+        Employee = await context.Employees
+            .FirstOrDefaultAsync(emp => emp.Id == EmployeeId);
+
+    }
 }
 
