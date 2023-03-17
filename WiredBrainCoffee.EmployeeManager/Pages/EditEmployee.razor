@@ -45,6 +45,7 @@ else
         {
             using var context = ContextFactory.CreateDbContext();
             Departments = await context.Departments
+                .AsNoTracking()
                 .OrderBy(dep => dep.Name)
                 .ToArrayAsync();
             Employee = await context.Employees
