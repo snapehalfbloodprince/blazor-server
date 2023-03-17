@@ -1,6 +1,7 @@
 ﻿@page "/employees/edit/{employeeId:int}"
 @inject IDbContextFactory<EmployeeManagerDbContext> ContextFactory;
 @inject NavigationManager NavigationManager;
+@inject StateContainer StateContainer;
 
 <PageTitle>Edit Employee</PageTitle>
 <h1>Edit Employee</h1>
@@ -88,7 +89,7 @@ else
 
     private void NavigateToOverviewPage()
     {
-        NavigationManager.NavigateTo("/employees/list");
+        NavigationManager.NavigateTo($"/employees/list/{StateContainer.EmployeeOverviewPage}");
     }
 }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using WiredBrainCoffee.EmployeeManager.Data;
+using WiredBrainCoffee.EmployeeManager.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContextFactory<EmployeeManagerDbContext>(
     options=> options.UseSqlServer(
         builder.Configuration.GetConnectionString("EmployeeManagerDb")));
+builder.Services.AddScoped<StateContainer>();
 
 var app = builder.Build();
 #region Migrazione a runtime
