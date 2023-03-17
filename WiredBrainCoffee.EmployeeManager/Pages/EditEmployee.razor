@@ -12,10 +12,17 @@
 else
 {
     <EmployeeForm Employee="@Employee"
-                  Departments="@Departments"
-                  IsBusy="@IsBusy"
-                  IsEdit="true"
-                  OnSubmit="@HandleSubmit" />
+              Departments="@Departments"
+              IsBusy="@IsBusy"
+              IsEdit="true"
+              OnSubmit="@HandleSubmit" />
+}
+@if (ErrorMessage is not null)
+{
+    <br />
+    <div class="alert alert-danger">
+        @ErrorMessage
+    </div>
 }
 
 @code {
@@ -26,8 +33,9 @@ else
 
     private Department[]? Departments { get; set; }
 
-
     private bool IsBusy { get; set; }
+
+    public string? ErrorMessage { get; set; }
 
 
     protected override async Task OnParametersSetAsync()
@@ -54,6 +62,7 @@ else
     {
         if (Employee is null || IsBusy || !isValid)
         {
+            ErrorMessage = null;
             return;
         }
         IsBusy = true;
@@ -62,6 +71,10 @@ else
             using var context = ContextFactory.CreateDbContext();
             context.Update(Employee);
             await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error while saving Employee {ex.Message}";
         }
         finally
         {
