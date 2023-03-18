@@ -118,9 +118,17 @@ else
             $"Delete employee {employee.FirstName} {employee.LastName}?");
         if (isOk)
         {
-            using var context = ContextFactory.CreateDbContext();
-            context.Employees.Remove(employee);
-            await context.SaveChangesAsync();
+            try
+            {
+                using var context = ContextFactory.CreateDbContext();
+                context.Employees.Remove(employee);
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Se viene sollevata questa eccezione significa che il dipendente è già stato modificato o cancellato.
+                // Ci limitiamo a fare il catch, ed in seguito effettuiamo il LoadData per riportare l'utente alla tabella dei dipendenti.
+            }
             await LoadData();
         }
 
