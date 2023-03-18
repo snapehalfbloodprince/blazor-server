@@ -45,11 +45,15 @@ else
                     <td>@employee.LastName</td>
                     <td>@employee.IsDeveloper</td>
                     <td>@employee.Department?.Name</td>
-                    <td>
+                    <td class="btn-group-sm">
                         <a href="/employees/edit/@employee.Id"
                            class="btn btn-outline-primary">
                             Edit
                         </a>
+                        <button class="btn btn-outline-danger"
+                        @onclick="()=> HandleDelete(employee)" >
+                            Delete
+                        </button>
                     </td>
 
                 </tr>
@@ -72,7 +76,12 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        if (CurrentPage == null || CurrentPage < 1)
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        if(CurrentPage == null || CurrentPage < 1)
         {
             NavigationManager.NavigateTo("/employees/list/1");
             return;
@@ -100,6 +109,14 @@ else
         .Skip(itemsToSkip)
         .Take(ItemsPerPage)
         .ToArrayAsync();
+    }
+
+    private async Task HandleDelete(Employee employee)
+    {
+        using var context = ContextFactory.CreateDbContext();
+        context.Employees.Remove(employee);
+        await context.SaveChangesAsync();
+        await LoadData();
     }
 
 }
